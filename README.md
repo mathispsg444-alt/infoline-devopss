@@ -43,3 +43,5 @@ Déploiement via fichier YAML.
 ## 📊 Logs & Monitoring
 
 Intégration ELK Stack.
+
+## Mise à jour ECF - correction pipelines et infrastructure
