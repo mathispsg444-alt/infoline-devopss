@@ -1,20 +1,36 @@
-# Projet DevOps InfoLine - Infrastructure as Code
-
-# Configuration du provider AWS
 provider "aws" {
   region = "eu-west-1"
 }
 
-# Création d'un cluster Kubernetes EKS
-resource "aws_eks_cluster" "infoline_cluster" {
-  name     = "infoline-cluster"
-  role_arn = "arn:aws:iam::123456789012:role/eks-role"
+resource "aws_vpc" "infoline_vpc" {
+  cidr_block = "10.0.0.0/16"
 }
 
-# Fonction Lambda pour authentification
-resource "aws_lambda_function" "auth_function" {
-  function_name = "infoline-auth"
-  runtime       = "java17"
-  handler       = "com.infoline.AuthHandler"
-  role          = "arn:aws:iam::123456789012:role/lambda-role"
+resource "aws_subnet" "infoline_subnet" {
+  vpc_id            = aws_vpc.infoline_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "eu-west-1a"
 }
+
+resource "aws_security_group" "infoline_sg" {
+  vpc_id = aws_vpc.infoline_vpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "infoline_server" {
+  ami           = "ami-0c02fb55956c7d316" # Ubuntu (à adapter selon région)
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.infoline_subnet.id
+  vpc_security_group_ids = [aws_security_group.infoline_sg.id]
+
+  tags = {
+    Name = "Infoline-Server"
+  }
+}
+
