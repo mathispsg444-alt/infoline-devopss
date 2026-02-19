@@ -1,8 +1,17 @@
 version: 2.1
+
 jobs:
   build:
     docker:
       - image: cimg/node:18.0
+
     steps:
       - checkout
-      - run: echo "Frontend build"
+      - run: npm install
+      - run: npm run build
+
+workflows:
+  version: 2
+  build_frontend:
+    jobs:
+      - build
