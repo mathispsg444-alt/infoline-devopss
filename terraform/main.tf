@@ -1,3 +1,5 @@
+# Projet DevOps InfoLine - Infrastructure as Code
+
 # Configuration du provider AWS
 provider "aws" {
   region = "eu-west-1"
